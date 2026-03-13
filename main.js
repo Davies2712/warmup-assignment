@@ -23,8 +23,27 @@ function getShiftDuration(startTime, endTime) {
 // Returns: string formatted as h:mm:ss
 // ============================================================
 function getIdleTime(startTime, endTime) {
-    // TODO: Implement this function
+  const startSec = parseTimeToSeconds(startTime);
+  const endSec = parseTimeToSeconds(endTime);
+
+  const deliveryStart = 8 * 3600;  // 8:00:00 AM
+  const deliveryEnd = 22 * 3600;   // 10:00:00 PM
+
+  let idleSec = 0;
+
+  // Idle before delivery hours start
+  if (startSec < deliveryStart) {
+    idleSec += Math.min(endSec, deliveryStart) - startSec;
+  }
+
+  // Idle after delivery hours end
+  if (endSec > deliveryEnd) {
+    idleSec += endSec - Math.max(startSec, deliveryEnd);
+  }
+
+  return secondsToDuration(idleSec);
 }
+
 
 // ============================================================
 // Function 3: getActiveTime(shiftDuration, idleTime)
