@@ -249,7 +249,23 @@ function countBonusPerMonth(textFile, driverID, month) {
 // Returns: string formatted as hhh:mm:ss
 // ============================================================
 function getTotalActiveHoursPerMonth(textFile, driverID, month) {
-    // TODO: Implement this function
+  const content = fs.readFileSync(textFile, "utf8");
+  const lines = content.split("\n").filter((line) => line.trim() !== "");
+
+  const targetMonth = parseInt(month);
+  let totalSec = 0;
+
+  for (const line of lines) {
+    const cols = line.split(",");
+    if (cols[0].trim() === driverID) {
+      const recordMonth = parseInt(cols[2].trim().split("-")[1]);
+      if (recordMonth === targetMonth) {
+        totalSec += parseDurationToSeconds(cols[7].trim());
+      }
+    }
+  }
+
+  return secondsToLongDuration(totalSec);
 }
 
 // ============================================================
