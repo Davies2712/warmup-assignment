@@ -1,4 +1,8 @@
+const fs = require("fs");
+
 // HELPERS
+
+
 // Parse "hh:mm:ss am/pm" to total seconds from midnight
 function parseTimeToSeconds(timeStr) {
   timeStr = timeStr.trim().toLowerCase();
@@ -41,8 +45,6 @@ function secondsToLongDuration(totalSeconds) {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-const fs = require("fs");
-
 // ============================================================
 // Function 1: getShiftDuration(startTime, endTime)
 // startTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
@@ -50,13 +52,10 @@ const fs = require("fs");
 // Returns: string formatted as h:mm:ss
 // ============================================================
 function getShiftDuration(startTime, endTime) {
-    // TODO: Implement this function
   const startSec = parseTimeToSeconds(startTime);
   let endSec = parseTimeToSeconds(endTime);
   if (endSec < startSec) endSec += 24 * 3600;
   return secondsToDuration(endSec - startSec);
-}
-
 }
 
 // ============================================================
@@ -86,7 +85,6 @@ function getIdleTime(startTime, endTime) {
 
   return secondsToDuration(idleSec);
 }
-
 
 // ============================================================
 // Function 3: getActiveTime(shiftDuration, idleTime)
@@ -120,6 +118,7 @@ function metQuota(date, activeTime) {
 
   return activeSec >= quotaSec;
 }
+
 // ============================================================
 // Function 5: addShiftRecord(textFile, shiftObj)
 // textFile: (typeof string) path to shifts text file
@@ -184,7 +183,6 @@ function addShiftRecord(textFile, shiftObj) {
   };
 }
 
-
 // ============================================================
 // Function 6: setBonus(textFile, driverID, date, newValue)
 // textFile: (typeof string) path to shifts text file
@@ -239,7 +237,6 @@ function countBonusPerMonth(textFile, driverID, month) {
 
   return driverExists ? count : -1;
 }
-
 
 // ============================================================
 // Function 8: getTotalActiveHoursPerMonth(textFile, driverID, month)
@@ -330,8 +327,6 @@ function getRequiredHoursPerMonth(textFile, rateFile, bonusCount, driverID, mont
   return secondsToLongDuration(totalSec);
 }
 
-
-
 // ============================================================
 // Function 10: getNetPay(driverID, actualHours, requiredHours, rateFile)
 // driverID: (typeof string)
@@ -379,16 +374,15 @@ function getNetPay(driverID, actualHours, requiredHours, rateFile) {
   return basePay - salaryDeduction;
 }
 
-
 module.exports = {
-    getShiftDuration,
-    getIdleTime,
-    getActiveTime,
-    metQuota,
-    addShiftRecord,
-    setBonus,
-    countBonusPerMonth,
-    getTotalActiveHoursPerMonth,
-    getRequiredHoursPerMonth,
-    getNetPay
+  getShiftDuration,
+  getIdleTime,
+  getActiveTime,
+  metQuota,
+  addShiftRecord,
+  setBonus,
+  countBonusPerMonth,
+  getTotalActiveHoursPerMonth,
+  getRequiredHoursPerMonth,
+  getNetPay,
 };
