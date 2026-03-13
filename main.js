@@ -127,8 +127,63 @@ function metQuota(date, activeTime) {
 // Returns: object with 10 properties or empty object {}
 // ============================================================
 function addShiftRecord(textFile, shiftObj) {
-    // TODO: Implement this function
+  const { driverID, driverName, date, startTime, endTime } = shiftObj;
+
+  let lines = [];
+  try {
+    const content = fs.readFileSync(textFile, "utf8");
+    lines = content.split("\n").filter((line) => line.trim() !== "");
+  } catch (e) {
+    // File doesn't exist yet — start empty
+  }
+
+  // Reject duplicate (same driverID + date already exists)
+  for (const line of lines) {
+    const cols = line.split(",");
+    if (cols[0].trim() === driverID && cols[2].trim() === date) {
+      return {};
+    }
+  }
+
+  // Compute derived fields
+  const shiftDuration = getShiftDuration(startTime, endTime);
+  const idleTime = getIdleTime(startTime, endTime);
+  const activeTime = getActiveTime(shiftDuration, idleTime);
+  const quota = metQuota(date, activeTime);
+  const hasBonus = false;
+
+  const newEntry = `${driverID},${driverName},${date},${startTime},${endTime},${shiftDuration},${idleTime},${activeTime},${quota},${hasBonus}`;
+
+  // Insert after last record of this driverID, or append at end
+  let lastIndexOfDriver = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].split(",")[0].trim() === driverID) {
+      lastIndexOfDriver = i;
+    }
+  }
+
+  if (lastIndexOfDriver === -1) {
+    lines.push(newEntry);
+  } else {
+    lines.splice(lastIndexOfDriver + 1, 0, newEntry);
+  }
+
+  fs.writeFileSync(textFile, lines.join("\n") + "\n", "utf8");
+
+  return {
+    driverID,
+    driverName,
+    date,
+    startTime,
+    endTime,
+    shiftDuration,
+    idleTime,
+    activeTime,
+    metQuota: quota,
+    hasBonus,
+  };
 }
+
 
 // ============================================================
 // Function 6: setBonus(textFile, driverID, date, newValue)
