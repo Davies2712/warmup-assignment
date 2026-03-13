@@ -8,6 +8,12 @@ const fs = require("fs");
 // ============================================================
 function getShiftDuration(startTime, endTime) {
     // TODO: Implement this function
+  const startSec = parseTimeToSeconds(startTime);
+  let endSec = parseTimeToSeconds(endTime);
+  if (endSec < startSec) endSec += 24 * 3600;
+  return secondsToDuration(endSec - startSec);
+}
+
 }
 
 // ============================================================
