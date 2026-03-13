@@ -1,3 +1,46 @@
+// HELPERS
+// Parse "hh:mm:ss am/pm" to total seconds from midnight
+function parseTimeToSeconds(timeStr) {
+  timeStr = timeStr.trim().toLowerCase();
+  const parts = timeStr.split(" ");
+  const period = parts[1];
+  const timeParts = parts[0].split(":");
+  let hours = parseInt(timeParts[0]);
+  const minutes = parseInt(timeParts[1]);
+  const seconds = parseInt(timeParts[2]);
+
+  if (period === "am") {
+    if (hours === 12) hours = 0;
+  } else {
+    if (hours !== 12) hours += 12;
+  }
+
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+// Parse "h:mm:ss" or "hhh:mm:ss" duration to total seconds
+function parseDurationToSeconds(durationStr) {
+  durationStr = durationStr.trim();
+  const parts = durationStr.split(":");
+  return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+}
+
+// Convert seconds to "h:mm:ss" (no padding on hours)
+function secondsToDuration(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+// Convert seconds to "hhh:mm:ss" (3-digit zero-padded hours)
+function secondsToLongDuration(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
 const fs = require("fs");
 
 // ============================================================
