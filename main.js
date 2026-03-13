@@ -194,7 +194,20 @@ function addShiftRecord(textFile, shiftObj) {
 // Returns: nothing (void)
 // ============================================================
 function setBonus(textFile, driverID, date, newValue) {
-    // TODO: Implement this function
+  const content = fs.readFileSync(textFile, "utf8");
+  const lines = content.split("\n");
+
+  const updatedLines = lines.map((line) => {
+    if (line.trim() === "") return line;
+    const cols = line.split(",");
+    if (cols[0].trim() === driverID && cols[2].trim() === date) {
+      cols[9] = newValue.toString();
+      return cols.join(",");
+    }
+    return line;
+  });
+
+  fs.writeFileSync(textFile, updatedLines.join("\n"), "utf8");
 }
 
 // ============================================================
@@ -205,8 +218,28 @@ function setBonus(textFile, driverID, date, newValue) {
 // Returns: number (-1 if driverID not found)
 // ============================================================
 function countBonusPerMonth(textFile, driverID, month) {
-    // TODO: Implement this function
+  const content = fs.readFileSync(textFile, "utf8");
+  const lines = content.split("\n").filter((line) => line.trim() !== "");
+
+  const targetMonth = parseInt(month); // normalises "04" and "4" to the same number
+
+  let driverExists = false;
+  let count = 0;
+
+  for (const line of lines) {
+    const cols = line.split(",");
+    if (cols[0].trim() === driverID) {
+      driverExists = true;
+      const recordMonth = parseInt(cols[2].trim().split("-")[1]);
+      if (recordMonth === targetMonth) {
+        if (cols[9].trim().toLowerCase() === "true") count++;
+      }
+    }
+  }
+
+  return driverExists ? count : -1;
 }
+
 
 // ============================================================
 // Function 8: getTotalActiveHoursPerMonth(textFile, driverID, month)
