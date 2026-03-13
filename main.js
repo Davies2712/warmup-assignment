@@ -95,7 +95,9 @@ function getIdleTime(startTime, endTime) {
 // Returns: string formatted as h:mm:ss
 // ============================================================
 function getActiveTime(shiftDuration, idleTime) {
-    // TODO: Implement this function
+  const shiftSec = parseDurationToSeconds(shiftDuration);
+  const idleSec = parseDurationToSeconds(idleTime);
+  return secondsToDuration(shiftSec - idleSec);
 }
 
 // ============================================================
@@ -105,9 +107,19 @@ function getActiveTime(shiftDuration, idleTime) {
 // Returns: boolean
 // ============================================================
 function metQuota(date, activeTime) {
-    // TODO: Implement this function
-}
+  const activeSec = parseDurationToSeconds(activeTime);
 
+  const parts = date.split("-");
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]);
+  const day = parseInt(parts[2]);
+
+  // Eid al-Fitr period: April 10–30, 2025 → reduced quota of 6 hours
+  const isEid = year === 2025 && month === 4 && day >= 10 && day <= 30;
+  const quotaSec = isEid ? 6 * 3600 : 8 * 3600 + 24 * 60;
+
+  return activeSec >= quotaSec;
+}
 // ============================================================
 // Function 5: addShiftRecord(textFile, shiftObj)
 // textFile: (typeof string) path to shifts text file
